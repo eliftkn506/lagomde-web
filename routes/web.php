@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\UrunController;
+use App\Http\Controllers\KullaniciController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -49,4 +50,18 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('urunler/varyasyon/{id}', [UrunController::class, 'varyasyonSil'])
         ->name('admin.urunler.varyasyonSil');
         
+});
+    Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+
+
+
+Route::post('/giris', [KullaniciController::class, 'girisYap'])->name('giris')->middleware('guest');
+Route::post('/kayit', [KullaniciController::class, 'kayitOl'])->name('kayit')->middleware('guest');
+Route::post('/cikis', [KullaniciController::class, 'cikisYap'])->name('cikis')->middleware('auth');
+// Profil sayfası — sadece giriş yapmış kullanıcılar
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [KullaniciController::class, 'profilSayfasi'])->name('profil');
+    Route::get('/profil/siparisler', [KullaniciController::class, 'profilSayfasi'])->name('profil.siparisler');
+    Route::get('/profil/favoriler', [KullaniciController::class, 'profilSayfasi'])->name('profil.favoriler');
 });

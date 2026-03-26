@@ -24,7 +24,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'kullanicilar',
         ],
     ],
 
@@ -35,7 +35,7 @@ return [
     */
 
     'providers' => [
-    'users' => [
+    'kullanicilar' => [
         'driver' => 'eloquent',
         'model' => App\Models\Kullanici::class, // <-- Bunu değiştirin
     ],
