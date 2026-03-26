@@ -53,7 +53,7 @@
                 @csrf
                 
                 <div class="space-y-2.5">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Kullanıcı Tanımı</label>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">E-Mail</label>
                     <div class="relative group">
                         <input type="email" name="email" required 
                                class="w-full pl-12 pr-4 py-4.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-slate-100 focus:bg-white focus:border-slate-800 outline-none transition-all duration-300 text-slate-900 font-semibold placeholder:text-slate-300"
