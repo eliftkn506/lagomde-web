@@ -10,28 +10,31 @@ class Kullanici extends Authenticatable
     use Notifiable;
 
     protected $table = 'kullanicilar';
-    
-    // Tasarımında created_at/updated_at var ama içerikleri NULL ise Laravel'in hata vermemesi için:
-    public $timestamps = false; 
+
+    public $timestamps = false; // created_at / updated_at aktif
 
     protected $guarded = ['id'];
 
-    // Şifre sütununun adı 'sifre' olduğu için gizliyoruz
     protected $hidden = ['sifre', 'remember_token'];
 
-    /**
-     * Oturum açarken 'email' yerine 'eposta' sütununa bak.
-     */
-    public function getAuthIdentifierName()
-    {
-        return 'eposta';
-    }
 
-    /**
-     * Şifre kontrolü yaparken 'password' yerine 'sifre' sütununa bak.
-     */
-    public function getAuthPassword()
+
+    // Auth için sifre sütununu kullan
+    public function getAuthPassword(): string
     {
         return $this->sifre;
     }
+
+
+    // Session'a user_id olarak sayısal id'yi yaz
+public function getAuthIdentifier()
+{
+    return $this->id;
+}
+
+// Login için eposta ile bul
+public function getAuthIdentifierName(): string
+{
+    return 'id'; // ← bunu 'eposta'dan 'id'ye çevir
+}
 }
