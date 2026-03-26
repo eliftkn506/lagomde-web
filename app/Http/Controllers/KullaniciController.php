@@ -13,18 +13,8 @@ use Illuminate\Validation\ValidationException;
 
 class KullaniciController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | GİRİŞ YAP
-    |--------------------------------------------------------------------------
-    | - Rate limiting: aynı IP + eposta 5 denemeden sonra 60sn kilitlenir
-    | - Hash::check ile manuel doğrulama (sütun adı 'sifre' olduğu için
-    |   Auth::attempt() kullanılmıyor)
-    | - Auth::login() + session regenerate (session fixation koruması)
-    */
     public function girisYap(Request $request): RedirectResponse
     {
-        // 1) Validasyon
         $request->validate([
             'eposta' => ['required', 'string', 'email'],
             'sifre'  => ['required', 'string'],
@@ -34,33 +24,25 @@ class KullaniciController extends Controller
             'sifre.required'  => 'Şifre gereklidir.',
         ]);
 
-        // 2) Rate limiting — 5 başarısız deneme → 60 saniye bekleme
         $throttleKey = Str::lower($request->input('eposta')) . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($throttleKey, maxAttempts: 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-
             throw ValidationException::withMessages([
                 'eposta' => "Çok fazla giriş denemesi yaptınız. {$seconds} saniye sonra tekrar deneyin.",
             ]);
         }
 
-        // 3) Kullanıcıyı bul
         $kullanici = Kullanici::where('eposta', $request->input('eposta'))->first();
 
-        // 4) Şifre kontrolü
         if (! $kullanici || ! Hash::check($request->input('sifre'), $kullanici->sifre)) {
             RateLimiter::hit($throttleKey, 60);
-
             throw ValidationException::withMessages([
                 'eposta' => 'E-posta adresi veya şifre hatalı.',
             ]);
         }
 
-        // 5) Başarılı giriş — rate limiter sıfırla
         RateLimiter::clear($throttleKey);
-
-        // 6) Oturumu aç + session regenerate (session fixation önlemi)
         Auth::login($kullanici, $request->boolean('beni_hatirla'));
         $request->session()->regenerate();
 
@@ -69,23 +51,13 @@ class KullaniciController extends Controller
             ->with('success', 'Hoş geldiniz, ' . $kullanici->ad . '! 👋');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | KAYIT OL
-    |--------------------------------------------------------------------------
-    | - E-posta unique kontrolü DB seviyesinde
-    | - Şifre Hash::make ile hashlenerek kaydedilir
-    | - Kayıt sonrası otomatik giriş yapılır
-    */
     public function kayitOl(Request $request): RedirectResponse
     {
-        // 1) Validasyon
         $request->validate([
             'ad'     => ['required', 'string', 'max:100'],
             'soyad'  => ['required', 'string', 'max:100'],
             'eposta' => ['required', 'string', 'email', 'max:255', 'unique:kullanicilar,eposta'],
             'sifre'  => ['required', 'string', 'min:6', 'confirmed'],
-            // 'confirmed' → 'sifre_confirmation' alanıyla eşleşmeli
         ], [
             'ad.required'      => 'Ad alanı gereklidir.',
             'soyad.required'   => 'Soyad alanı gereklidir.',
@@ -97,7 +69,6 @@ class KullaniciController extends Controller
             'sifre.confirmed'  => 'Şifreler eşleşmiyor.',
         ]);
 
-        // 2) Kullanıcıyı oluştur (şifre hashlenir)
         $kullanici = Kullanici::create([
             'ad'     => $request->input('ad'),
             'soyad'  => $request->input('soyad'),
@@ -105,7 +76,6 @@ class KullaniciController extends Controller
             'sifre'  => Hash::make($request->input('sifre')),
         ]);
 
-        // 3) Otomatik giriş yap + session regenerate
         Auth::login($kullanici);
         $request->session()->regenerate();
 
@@ -114,31 +84,93 @@ class KullaniciController extends Controller
             ->with('success', 'Hesabınız oluşturuldu! Hoş geldiniz, ' . $kullanici->ad . ' 🎉');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ÇIKIŞ YAP
-    |--------------------------------------------------------------------------
-    | - Auth::logout() → guard'ı temizler
-    | - session invalidate → tüm session verisini siler
-    | - session regenerateToken → CSRF token'ı yeniler
-    */
     public function cikisYap(Request $request): RedirectResponse
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('home');
     }
 
     public function profilSayfasi(): \Illuminate\View\View
-{
-    $kullanici = Auth::user();
+    {
+        $kullanici = Auth::user();
+        return view('profil', compact('kullanici'));
+    }
 
-    // İleride siparişler buraya gelecek
-    // $siparisler = $kullanici->siparisler()->latest()->get();
+    /*
+    |--------------------------------------------------------------------------
+    | HESAP AYARLARI — Sayfayı göster
+    |--------------------------------------------------------------------------
+    */
+    public function ayarlarSayfasi(): \Illuminate\View\View
+    {
+        $kullanici = Auth::user();
+        return view('profil-ayarlar', compact('kullanici'));
+    }
 
-    return view('profil', compact('kullanici'));
-}
+    /*
+    |--------------------------------------------------------------------------
+    | HESAP AYARLARI — Ad / Soyad / E-posta güncelle
+    |--------------------------------------------------------------------------
+    */
+    public function bilgileriGuncelle(Request $request): RedirectResponse
+    {
+        $kullanici = Auth::user();
+
+        $request->validate([
+            'ad'     => ['required', 'string', 'max:100'],
+            'soyad'  => ['required', 'string', 'max:100'],
+            'eposta' => ['required', 'string', 'email', 'max:255', 'unique:kullanicilar,eposta,' . $kullanici->id],
+        ], [
+            'ad.required'     => 'Ad alanı gereklidir.',
+            'soyad.required'  => 'Soyad alanı gereklidir.',
+            'eposta.required' => 'E-posta adresi gereklidir.',
+            'eposta.email'    => 'Geçerli bir e-posta adresi girin.',
+            'eposta.unique'   => 'Bu e-posta adresi başka bir hesapta kullanılıyor.',
+        ]);
+
+        $kullanici->ad     = $request->input('ad');
+        $kullanici->soyad  = $request->input('soyad');
+        $kullanici->eposta = $request->input('eposta');
+        $kullanici->save();
+
+        return redirect()
+            ->route('profil.ayarlar')
+            ->with('success_bilgi', 'Bilgileriniz başarıyla güncellendi.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | HESAP AYARLARI — Şifre değiştir
+    |--------------------------------------------------------------------------
+    */
+    public function sifreDegistir(Request $request): RedirectResponse
+    {
+        $kullanici = Auth::user();
+
+        $request->validate([
+            'mevcut_sifre'          => ['required', 'string'],
+            'yeni_sifre'            => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'mevcut_sifre.required'  => 'Mevcut şifrenizi girin.',
+            'yeni_sifre.required'    => 'Yeni şifre gereklidir.',
+            'yeni_sifre.min'         => 'Yeni şifre en az 6 karakter olmalıdır.',
+            'yeni_sifre.confirmed'   => 'Şifreler eşleşmiyor.',
+        ]);
+
+        // Mevcut şifre doğru mu?
+        if (! Hash::check($request->input('mevcut_sifre'), $kullanici->sifre)) {
+            return back()
+                ->withErrors(['mevcut_sifre' => 'Mevcut şifreniz hatalı.'])
+                ->withInput();
+        }
+
+        $kullanici->sifre = Hash::make($request->input('yeni_sifre'));
+        $kullanici->save();
+
+        return redirect()
+            ->route('profil.ayarlar')
+            ->with('success_sifre', 'Şifreniz başarıyla değiştirildi.');
+    }
 }
