@@ -14,16 +14,6 @@
         @php
             $ilkKategori   = $vitrinKategorileri->first();
             $digerKategoriler = $vitrinKategorileri->slice(1, 6);
-
-            $imgs = [
-                'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1542314546-527e02df357e?q=80&w=600&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1497032205916-ac775f0649ae?q=80&w=600&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1512413914856-12151121d120?q=80&w=600&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop',
-                'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=600&auto=format&fit=crop',
-            ];
-            $heroImg = 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=1000&auto=format&fit=crop';
         @endphp
 
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-4" style="height:auto lg:height:580px">
@@ -32,9 +22,12 @@
             <a href="#"
                class="card-lift lg:col-span-2 relative rounded-3xl overflow-hidden block"
                style="min-height:420px">
-                <img src="{{ $heroImg }}"
+                
+                {{-- Veritabanından görsel kontrolü: Görsel varsa storage'dan çek, yoksa varsayılan placeholder kullan --}}
+                <img src="{{ $ilkKategori->gorsel ? asset('storage/' . $ilkKategori->gorsel) : 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?q=80&w=1000&auto=format&fit=crop' }}"
                      alt="{{ $ilkKategori->ad }}"
                      class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-[1.03]">
+                
                 {{-- gradient --}}
                 <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(26,22,18,.88) 0%, rgba(26,22,18,.0) 55%)"></div>
                 {{-- tag --}}
@@ -55,9 +48,12 @@
                     <a href="#"
                        class="card-lift relative rounded-2xl overflow-hidden block"
                        style="min-height:180px">
-                        <img src="{{ $imgs[$i % count($imgs)] }}"
+                        
+                        {{-- Veritabanından görsel kontrolü --}}
+                        <img src="{{ $kat->gorsel ? asset('storage/' . $kat->gorsel) : 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=600&auto=format&fit=crop' }}"
                              alt="{{ $kat->ad }}"
                              class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-[1.05]">
+                        
                         <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(26,22,18,.78) 0%, transparent 55%)"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-4">
                             <h3 class="text-white text-[14px] font-semibold leading-snug">{{ $kat->ad }}</h3>
