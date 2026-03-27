@@ -30,6 +30,9 @@
 
         .font-display { font-family: 'Cormorant Garamond', serif; }
 
+        /* Alpine.js yanıp sönmeyi engelleme */
+        [x-cloak] { display: none !important; }
+
         /* ─── SCROLLBAR ─── */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--cream); }
@@ -95,29 +98,24 @@
         .nav-special::after { display: none !important; }
 
         /* ─── MEGA MENU ─── */
-        /* Nav bar'ın overflow:visible olması şart */
         #site-nav { overflow: visible; }
         #site-nav > div { overflow: visible; }
         #site-nav ul { overflow: visible; }
-
-        .nav-item { position: static; } /* mega panel fixed konumlanacak */
+        .nav-item { position: static; }
 
         .mega-panel {
-            position: fixed;   /* fixed — nav overflow:hidden'dan etkilenmez */
-            left: 0;
-            right: 0;
-            top: 0;            /* JS ile ayarlanacak */
+            position: fixed;
+            left: 0; right: 0; top: 0;
             background: #FFFFFF;
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
             box-shadow: 0 16px 48px rgba(26,22,18,.10);
             padding: 32px 40px;
-            display: none;     /* JS toggle */
+            display: none;
             z-index: 9999;
         }
         .mega-panel.is-open { display: flex; gap: 40px; flex-wrap: wrap; }
 
-        /* Panel içi ok işareti */
         .mega-panel::before {
             content: '';
             position: absolute;
@@ -131,7 +129,6 @@
         }
 
         .mega-col { min-width: 150px; max-width: 200px; }
-
         .mega-col-title {
             font-size: 11px;
             font-weight: 700;
@@ -158,18 +155,11 @@
         /* ─── TICKER ─── */
         .ticker-wrap { overflow: hidden; }
         .ticker-track {
-            display: flex;
-            gap: 80px;
+            display: flex; gap: 80px;
             animation: ticker 28s linear infinite;
             width: max-content;
         }
         @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-        /* ─── FOOTER ─── */
-        footer {
-            background: var(--ink);
-            color: rgba(255,255,255,.55);
-        }
 
         /* ─── CARD HOVER ─── */
         .card-lift {
@@ -199,8 +189,8 @@
         <div class="max-w-[1440px] mx-auto px-6 lg:px-10 flex items-center gap-6">
 
             {{-- Logo --}}
-            <a href="/" class="flex-shrink-0 mr-2">
-                <img src="{{ asset('logo.png') }}" alt="Lagomde" class="h-14 md:h-16 w-auto object-contain">
+            <a href="/" class="flex-shrink-0 mr-4 mt-2">
+                <img src="{{ asset('logo.svg') }}" alt="Lagomde" class="h-20 md:h-24 w-auto object-contain transition-transform hover:scale-[1.02] duration-300">
             </a>
 
             {{-- Search --}}
@@ -226,17 +216,17 @@
                     <i class="fa-regular fa-circle-question text-lg"></i>
                 </a>
                 
-                {{-- KULLANICI GİRİŞ KONTROLÜ EKLENDİ --}}
+                {{-- KULLANICI GİRİŞ KONTROLÜ --}}
                 @auth
             <div class="relative" x-data="{ open: false }">
                 <button @click="open = !open"
-                    class="hover:text-blue-600 transition flex items-center gap-1" title="Hesabım">
+                    class="hover:text-[var(--accent)] transition flex items-center gap-1" title="Hesabım">
                     <i class="fa-regular fa-user text-xl"></i>
                     <span class="text-sm font-medium hidden lg:block">{{ Auth::user()->ad }}</span>
                 </button>
 
                 <div x-show="open" x-cloak @click.outside="open = false"
-                    class="absolute right-0 mt-3 w-52 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 py-2 overflow-hidden">
+                    class="absolute right-0 mt-3 w-52 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 py-2 overflow-hidden text-left">
 
                     <div class="px-4 py-3 border-b border-gray-50">
                         <p class="text-sm font-semibold text-gray-800">{{ Auth::user()->ad }} {{ Auth::user()->soyad }}</p>
@@ -266,7 +256,7 @@
             </div>
             @else
             <button onclick="openAuthModal('giris')"
-                class="flex items-center gap-2 bg-gray-900 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-black transition-all duration-200">
+                class="flex items-center gap-2 text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200" style="background:var(--ink); color:var(--warm-white);">
                 <i class="fa-regular fa-user text-sm"></i>
                 <span class="hidden lg:block">Giriş Yap</span>
             </button>
@@ -283,7 +273,7 @@
     {{-- ═══════════════ NAV ═══════════════ --}}
     <nav id="site-nav" class="border-b" style="background:#fff;border-color:var(--border);position:relative;z-index:400;overflow:visible">
         <div class="max-w-[1440px] mx-auto px-6 lg:px-10" style="overflow:visible">
-            <ul id="nav-list" class="flex items-center gap-1 lg:gap-3 xl:gap-5 py-3 hide-scrollbar" style="overflow:visible">
+            <ul id="nav-list" class="flex items-center gap-4 lg:gap-6 xl:gap-8 py-3 hide-scrollbar justify-center" style="overflow:visible">
 
                 @if(isset($anaMenuler) && $anaMenuler->count() > 0)
                     @foreach($anaMenuler as $menu)
@@ -323,14 +313,22 @@
         </div>
     </nav>
 
-    {{-- ═══════════════ TICKER ═══════════════ --}}
-    <div class="py-2.5 border-b hidden md:block" style="background:var(--ink);border-color:rgba(255,255,255,.08)">
-        <div class="ticker-wrap">
-            <div class="ticker-track text-[11px] font-medium tracking-[.08em] uppercase" style="color:rgba(255,255,255,.55)">
-                @php $items = ['Ücretsiz Kargo — 500₺ Üzeri', '1.000.000+ Mutlu Hediye', 'Koşulsuz İade Garantisi', 'Aynı Gün Gönderim', 'Kişiselleştirilmiş Paketleme', 'Ücretsiz Kargo — 500₺ Üzeri', '1.000.000+ Mutlu Hediye', 'Koşulsuz İade Garantisi', 'Aynı Gün Gönderim', 'Kişiselleştirilmiş Paketleme']; @endphp
-                @foreach($items as $item)
-                    <span>{{ $item }}</span>
-                @endforeach
+    {{-- ═══════════════ AVANTAJLAR ═══════════════ --}}
+    <div class="bg-white py-3 border-b border-gray-100 shadow-sm hidden md:block">
+        <div class="max-w-[80rem] mx-auto px-6 flex justify-between items-center text-sm font-medium text-gray-700">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-truck-fast text-lg text-[var(--accent)]"></i>
+                <span>Hızlı Gönderim</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span>1.000.000+ Mutlu Kişi</span>
+                <div class="text-[var(--accent)] text-xs">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-box-archive text-lg text-[var(--accent)]"></i>
+                <span>Koşulsuz İade</span>
             </div>
         </div>
     </div>
@@ -340,58 +338,13 @@
         @yield('content')
     </main>
 
-    {{-- ═══════════════ FOOTER ═══════════════ --}}
-    <footer class="pt-16 pb-10 mt-20">
-        <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 pb-12 border-b" style="border-color:rgba(255,255,255,.08)">
+    {{-- ═══════════════ FOOTER PARTIALS ÇAĞIRMA ═══════════════ --}}
+    @include('partials.footer')
 
-                <div class="col-span-2 md:col-span-1">
-                    <img src="{{ asset('logo.png') }}" alt="Lagomde" class="h-12 w-auto object-contain brightness-0 invert mb-5">
-                    <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,.4)">Sevdiklerinize anlamlı hediyeler. Her an, her duygu için.</p>
-                </div>
-
-                <div>
-                    <p class="text-xs font-semibold tracking-[.1em] uppercase mb-5 text-white">Keşfet</p>
-                    @foreach(['Yeni Gelenler', 'Çok Satanlar', 'Kişiselleştirilmiş', 'Deneyim Hediyeleri'] as $link)
-                        <a href="#" class="block text-xs mb-3 hover:text-white transition" style="color:rgba(255,255,255,.45)">{{ $link }}</a>
-                    @endforeach
-                </div>
-
-                <div>
-                    <p class="text-xs font-semibold tracking-[.1em] uppercase mb-5 text-white">Yardım</p>
-                    @foreach(['Sipariş Takibi', 'İade & Değişim', 'S.S.S.', 'Bize Ulaşın'] as $link)
-                        <a href="#" class="block text-xs mb-3 hover:text-white transition" style="color:rgba(255,255,255,.45)">{{ $link }}</a>
-                    @endforeach
-                </div>
-
-                <div>
-                    <p class="text-xs font-semibold tracking-[.1em] uppercase mb-5 text-white">Sosyal</p>
-                    <div class="flex gap-4">
-                        @foreach([['fa-instagram','#'],['fa-pinterest','#'],['fa-tiktok','#']] as [$icon, $href])
-                            <a href="{{ $href }}" class="w-9 h-9 flex items-center justify-center rounded-full text-sm transition hover:bg-white hover:text-[var(--ink)]" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)">
-                                <i class="fa-brands {{ $icon }}"></i>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px]" style="color:rgba(255,255,255,.25)">
-                <span>&copy; {{ date('Y') }} Lagomde. Tüm hakları saklıdır.</span>
-                <div class="flex gap-6">
-                    <a href="#" class="hover:text-white transition">Gizlilik</a>
-                    <a href="#" class="hover:text-white transition">Kullanım Koşulları</a>
-                    <a href="#" class="hover:text-white transition">Çerezler</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    {{-- AUTH MODAL DOSYASI BURAYA EKLENDİ --}}
+    {{-- AUTH MODAL DOSYASI --}}
     @include('partials.auth-modal')
 
-    {{-- ALPINE.JS EKLENDİ (Modalın çalışması için gerekli) --}}
+    {{-- ALPINE.JS --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <script>
@@ -401,7 +354,7 @@
             header.classList.toggle('scrolled', window.scrollY > 20);
         });
 
-        /* ── Mega Menu: fixed konumlu, nav'ın altına yapışık ── */
+        /* ── Mega Menu ── */
         (function() {
             const navItems = document.querySelectorAll('.nav-item[data-has-mega="true"]');
             let activePanel = null;
@@ -418,18 +371,15 @@
                 const panel = item.querySelector('.mega-panel');
                 if (!panel) return;
 
-                // Önce tümünü kapat
                 document.querySelectorAll('.mega-panel.is-open').forEach(p => {
                     p.classList.remove('is-open');
                     p.style.top = '';
                 });
                 document.querySelectorAll('.nav-chevron').forEach(c => c.style.transform = '');
 
-                // Paneli nav'ın hemen altına yerleştir
                 const navBottom = getNavBottom();
                 panel.style.top = navBottom + 'px';
 
-                // Ok işaretini ortalı konumlandır
                 const rect = item.getBoundingClientRect();
                 const arrowLeft = rect.left + rect.width / 2 - 5;
                 panel.style.setProperty('--arrow-left', arrowLeft + 'px');
@@ -437,7 +387,6 @@
 
                 panel.classList.add('is-open');
 
-                // Chevron döndür
                 const chev = item.querySelector('.nav-chevron');
                 if (chev) chev.style.transform = 'rotate(180deg)';
 
@@ -472,14 +421,12 @@
                 panel.addEventListener('mouseleave', () => scheduleClose(panel));
             });
 
-            // Dışarı tıkla kapat
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.nav-item') && !e.target.closest('.mega-panel')) {
                     document.querySelectorAll('.mega-panel.is-open').forEach(p => closePanel(p));
                 }
             });
 
-            // Pencere resize'da konumu güncelle
             window.addEventListener('resize', () => {
                 if (activePanel) {
                     activePanel.style.top = getNavBottom() + 'px';

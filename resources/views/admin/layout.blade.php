@@ -196,12 +196,10 @@
     </a>
 
     <div class="nav-dropdown">
-        {{-- Aktiflik kontrolü düzeltildi (admin.urunler* ve admin.kategoriler*) --}}
         <a href="#" class="nav-link {{ request()->routeIs('admin.urunler*', 'admin.kategoriler*') ? 'active' : '' }}">
             <i class="fa-solid fa-box"></i> Ürün Yönetimi <i class="fa-solid fa-chevron-down text-[9px] ml-0.5"></i>
         </a>
         <div class="dropdown-menu">
-            {{-- Linkler route() fonksiyonu ile bağlandı --}}
             <a href="{{ route('admin.urunler.index') }}" class="dropdown-item"><i class="fa-solid fa-list"></i> Tüm Ürünler</a>
             <a href="{{ route('admin.urunler.create') }}" class="dropdown-item"><i class="fa-solid fa-plus"></i> Yeni Ürün Ekle</a>
             <a href="{{ route('admin.kategoriler.index') }}" class="dropdown-item"><i class="fa-solid fa-layer-group"></i> Kategoriler & Filtreler</a>
@@ -228,6 +226,28 @@
         <div class="dropdown-menu">
             <a href="#" class="dropdown-item"><i class="fa-solid fa-percent"></i> Kuponlar</a>
             <a href="#" class="dropdown-item"><i class="fa-solid fa-star"></i> Yorumlar</a>
+        </div>
+    </div>
+
+    {{-- YENİ EKLENEN: ANASAYFA YÖNETİMİ --}}
+    <div class="nav-dropdown">
+        <a href="#" class="nav-link {{ request()->routeIs('admin.anasayfa-bloklari*') ? 'active' : '' }}">
+            <i class="fa-solid fa-layer-group"></i> Anasayfa Yönetimi <i class="fa-solid fa-chevron-down text-[9px] ml-0.5"></i>
+        </a>
+        <div class="dropdown-menu">
+            <a href="{{ route('admin.anasayfa-bloklari.index') }}" class="dropdown-item"><i class="fa-solid fa-list"></i> Tüm Bloklar</a>
+            <a href="{{ route('admin.anasayfa-bloklari.create') }}" class="dropdown-item"><i class="fa-solid fa-plus"></i> Yeni Blok Ekle</a>
+        </div>
+    </div>
+
+    {{-- SAYFALAR MENÜSÜ --}}
+    <div class="nav-dropdown">
+        <a href="#" class="nav-link {{ request()->routeIs('admin.sayfalar*') ? 'active' : '' }}">
+            <i class="fa-solid fa-file-lines"></i> Sayfalar <i class="fa-solid fa-chevron-down text-[9px] ml-0.5"></i>
+        </a>
+        <div class="dropdown-menu">
+            <a href="{{ route('admin.sayfalar.index') }}" class="dropdown-item"><i class="fa-solid fa-list"></i> Tüm Sayfalar</a>
+            <a href="{{ route('admin.sayfalar.create') }}" class="dropdown-item"><i class="fa-solid fa-plus"></i> Yeni Sayfa Ekle</a>
         </div>
     </div>
 

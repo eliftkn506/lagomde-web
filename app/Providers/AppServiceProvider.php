@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View; // Bunu ekle
-use App\Models\Kategori; // Bunu ekle
+use Illuminate\Support\Facades\View;
+use App\Models\Kategori;
+use App\Models\Sayfa; // Sayfa modelini ekledik
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,13 +17,24 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
-            // with('altKategoriler.altKategoriler') diyerek 3. seviyeye kadar tüm ağacı tek seferde çekiyoruz
+            
+            // 1. Kategorileri Çek (Senin yazdığın mevcut kod)
             $anaMenuler = Kategori::with('altKategoriler.altKategoriler')
                                   ->whereNull('ust_kategori_id')
                                   ->orderBy('id', 'asc')
                                   ->get();
                                   
-            $view->with('anaMenuler', $anaMenuler);
+            // 2. Footer CMS Sayfalarını Çek (Yeni eklenen kod)
+            $sayfalar = Sayfa::where('aktif_mi', true)->orderBy('sira', 'asc')->get();
+            
+            // Tüm verileri view'a gönderiyoruz
+            $view->with([
+                'anaMenuler'        => $anaMenuler,
+                'footerKurumsal'    => $sayfalar->where('footer_konum', 'kurumsal'),
+                'footerYardim'      => $sayfalar->where('footer_konum', 'yardim'),
+                'footerSozlesmeler' => $sayfalar->where('footer_konum', 'sozlesmeler'),
+            ]);
+            
         });
     }
 }

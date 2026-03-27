@@ -1,67 +1,78 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KullaniciController;
+use App\Http\Controllers\SayfaController; // Ön Yüz Sayfaları İçin
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\KategoriController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\UrunController;
-use App\Http\Controllers\KullaniciController;
+use App\Http\Controllers\Admin\SayfaController as AdminSayfaController; // Admin Sayfaları İçin
+use App\Http\Controllers\Admin\AnasayfaBlokController;
 
+// ── FRONTEND (ÖN YÜZ) ─────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('admin/login', [AuthController::class, 'showLogin'])->name('admin.login');
-Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.post');
+// Dinamik Sayfalar (Biz Kimiz, KVKK vb.)
+Route::get('/s/{slug}', [SayfaController::class, 'goster'])->name('sayfa.goster');
 
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-    
-    // ── DASHBOARD VE GENEL ROTALAR ──────────────────────────
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-
-    Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
-
-    // ── KATEGORİ ROTALARI ───────────────────────────────────
-    Route::get('/kategoriler', [KategoriController::class, 'index'])->name('admin.kategoriler.index');
-    Route::post('/kategoriler', [KategoriController::class, 'store'])->name('admin.kategoriler.store');
-
-    // ── ÜRÜN ROTALARI ───────────────────────────────────────
-    
-    // Resource rotası: index, create, store, edit, update, destroy işlemlerini otomatik kapsar.
-    // İsimlendirmenin "admin.urunler.xxx" şeklinde kalması için ->names('admin.urunler') eklendi.
-    Route::resource('urunler', UrunController::class)
-        ->parameters(['urunler' => 'id'])
-        ->names('admin.urunler')
-        ->except(['show']); // Ürün detay sayfası frontend'de, admin'de gerek yok
-
-    // Görsel silme (AJAX — DELETE isteği, JSON döner) -- EKSİKTİ, EKLENDİ
-    Route::delete('urunler/gorsel/{gorselId}', [UrunController::class, 'gorselSil'])
-        ->name('admin.urunler.gorselSil');
-
-    // Varyasyon yönetim sayfası
-    Route::get('urunler/{id}/varyasyonlar', [UrunController::class, 'varyasyonlar'])
-        ->name('admin.urunler.varyasyonlar');
-
-    // Yeni varyasyon kaydetme
-    Route::post('urunler/{id}/varyasyonlar', [UrunController::class, 'varyasyonKaydet'])
-        ->name('admin.urunler.varyasyonKaydet');
-
-    // Varyasyon silme
-    Route::delete('urunler/varyasyon/{id}', [UrunController::class, 'varyasyonSil'])
-        ->name('admin.urunler.varyasyonSil');
-        
-});
-    Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
-
-
-
-
+// ── KULLANICI İŞLEMLERİ ───────────────────────────────────────
 Route::post('/giris', [KullaniciController::class, 'girisYap'])->name('giris')->middleware('guest');
 Route::post('/kayit', [KullaniciController::class, 'kayitOl'])->name('kayit')->middleware('guest');
 Route::post('/cikis', [KullaniciController::class, 'cikisYap'])->name('cikis')->middleware('auth');
-// Profil sayfası — sadece giriş yapmış kullanıcılar
+
 Route::middleware('auth')->group(function () {
     Route::get('/profil', [KullaniciController::class, 'profilSayfasi'])->name('profil');
     Route::get('/profil/siparisler', [KullaniciController::class, 'profilSayfasi'])->name('profil.siparisler');
     Route::get('/profil/favoriler', [KullaniciController::class, 'profilSayfasi'])->name('profil.favoriler');
+
+    // Hesap Ayarları
+    Route::get('/profil/ayarlar', [KullaniciController::class, 'ayarlarSayfasi'])->name('profil.ayarlar');
+    Route::post('/profil/ayarlar/bilgiler', [KullaniciController::class, 'bilgileriGuncelle'])->name('profil.bilgiler.guncelle');
+    Route::post('/profil/ayarlar/sifre', [KullaniciController::class, 'sifreDegistir'])->name('profil.sifre.degistir');
+});
+
+// ── ADMİN GİRİŞ ───────────────────────────────────────────────
+Route::get('admin/login', [AuthController::class, 'showLogin'])->name('admin.login');
+Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login.post');
+
+// ── ADMİN PANELİ ──────────────────────────────────────────────
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    
+    // Dashboard
+    Route::get('/', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+
+    // Kategoriler
+    Route::get('/kategoriler', [KategoriController::class, 'index'])->name('admin.kategoriler.index');
+    Route::post('/kategoriler', [KategoriController::class, 'store'])->name('admin.kategoriler.store');
+    
+    // Kategori Düzenleme, Güncelleme ve Silme Rotaları Eklendi
+    Route::get('/kategoriler/{id}/edit', [KategoriController::class, 'edit'])->name('admin.kategoriler.edit');
+    Route::put('/kategoriler/{id}', [KategoriController::class, 'update'])->name('admin.kategoriler.update');
+    Route::delete('/kategoriler/{id}', [KategoriController::class, 'destroy'])->name('admin.kategoriler.destroy');
+
+    // Ürünler
+    Route::resource('urunler', UrunController::class)
+        ->parameters(['urunler' => 'id'])
+        ->names('admin.urunler')
+        ->except(['show']);
+
+    Route::delete('urunler/gorsel/{gorselId}', [UrunController::class, 'gorselSil'])->name('admin.urunler.gorselSil');
+    Route::get('urunler/{id}/varyasyonlar', [UrunController::class, 'varyasyonlar'])->name('admin.urunler.varyasyonlar');
+    Route::post('urunler/{id}/varyasyonlar', [UrunController::class, 'varyasyonKaydet'])->name('admin.urunler.varyasyonKaydet');
+    Route::delete('urunler/varyasyon/{id}', [UrunController::class, 'varyasyonSil'])->name('admin.urunler.varyasyonSil');
+
+    // Yeni Eklenen: Sayfalar (CMS)
+    Route::resource('sayfalar', AdminSayfaController::class)
+        ->names('admin.sayfalar')
+        ->except(['show']);
+        
+    // Anasayfa Blokları Yönetimi
+    Route::resource('anasayfa-bloklari', \App\Http\Controllers\Admin\AnasayfaBlokController::class)
+        ->names('admin.anasayfa-bloklari')
+        ->except(['show']);
+
+    // Çıkış (Hem GET hem POST destekli)
+    Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout.post');
 });

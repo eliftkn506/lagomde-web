@@ -28,7 +28,7 @@
                 class="flex items-center gap-3 px-5 py-3.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition border-b border-gray-50">
                 <i class="fa-regular fa-heart w-4"></i> Favorilerim
             </a>
-            <a href="{{ route('profil') }}"
+            <a href="{{ route('profil.ayarlar') }}"
                 class="flex items-center gap-3 px-5 py-3.5 text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition border-b border-gray-50">
                 <i class="fa-regular fa-user w-4"></i> Hesap Ayarları
             </a>
