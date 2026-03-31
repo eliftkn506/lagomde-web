@@ -1,115 +1,154 @@
-<footer class="bg-white border-t mt-20 relative" style="border-color: var(--border);">
-    
-    {{-- Üst Bülten (Newsletter) Alanı --}}
-    <div class="border-b" style="border-color: var(--border); background: #fbfbfb;">
-        <div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="flex items-center gap-6">
-                <div class="hidden md:flex w-16 h-16 rounded-full bg-[#EAF1F1] items-center justify-center text-[#326765]">
-                    <i class="fa-regular fa-envelope-open text-2xl"></i>
+<footer style="background: var(--ink, #16120E);" class="relative mt-24 overflow-hidden">
+
+    {{-- Decorative top glow --}}
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px]"
+         style="background: linear-gradient(90deg, transparent, rgba(46,112,109,0.5), rgba(200,132,90,0.4), transparent);"></div>
+
+    {{-- ═══ NEWSLETTER SECTION ═══ --}}
+    <div class="border-b" style="border-color: rgba(255,255,255,0.07);">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-16">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+                
+                {{-- Left text --}}
+                <div class="text-center lg:text-left max-w-lg">
+                    <p class="text-[11px] font-bold tracking-[0.2em] uppercase mb-3" style="color: var(--copper, #C8845A);">
+                        Bültenimize Katılın
+                    </p>
+                    <h3 class="font-display text-3xl lg:text-4xl font-bold text-white leading-tight mb-3">
+                        Özel İndirimleri İlk Siz Öğrenin
+                    </h3>
+                    <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.45);">
+                        Yeni koleksiyonlar, sezonluk kampanyalar ve sürpriz indirimler için e-posta listemize katılın.
+                    </p>
                 </div>
-                <div>
-                    <h3 class="font-display text-2xl lg:text-3xl font-bold mb-1 text-gray-900">Özel İndirimleri Kaçırmayın</h3>
-                    <p class="text-sm text-gray-500">Yeni hediye kutuları ve kampanyalardan ilk siz haberdar olun.</p>
+
+                {{-- Subscribe form --}}
+                <div class="w-full lg:w-auto flex-shrink-0 lg:min-w-[420px]">
+                    <div class="flex items-center p-2 rounded-2xl" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+                        <input
+                            type="email"
+                            placeholder="E-posta adresinizi girin"
+                            class="flex-1 bg-transparent outline-none text-sm font-medium text-white placeholder-white/30 px-4 py-3"
+                        >
+                        <button
+                            class="flex-shrink-0 px-7 py-3.5 rounded-xl text-white text-[12px] font-bold tracking-wider uppercase transition-all duration-300 hover:scale-[1.03] hover:shadow-lg active:scale-95"
+                            style="background: var(--teal, #2E706D); box-shadow: 0 4px 20px rgba(46,112,109,0.35);"
+                        >
+                            Abone Ol
+                        </button>
+                    </div>
+                    <p class="text-[11px] mt-3 text-center lg:text-left" style="color: rgba(255,255,255,0.25);">
+                        Spam yok, istediğiniz zaman çıkabilirsiniz.
+                    </p>
                 </div>
-            </div>
-            <div class="w-full md:w-auto flex items-center relative max-w-md flex-1">
-                <input type="email" placeholder="E-posta adresiniz" class="w-full px-6 py-4 rounded-full text-sm outline-none border border-gray-200 transition-all focus:border-[#326765] focus:ring-4 focus:ring-[#EAF1F1] text-gray-800 placeholder-gray-400">
-                <button class="absolute right-1.5 top-1.5 bottom-1.5 px-7 rounded-full text-white text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:shadow-lg hover:scale-[1.02] active:scale-95" style="background: #326765;">
-                    Abone Ol
-                </button>
+
             </div>
         </div>
     </div>
 
-    {{-- Ana Footer Grid --}}
+    {{-- ═══ MAIN FOOTER GRID ═══ --}}
     <div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-14 lg:gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
 
-            {{-- Sütun 1: Logo & Hakkımızda --}}
-            <div class="lg:col-span-4 lg:pr-12">
-                <img src="{{ asset('logo.svg') }}" alt="Lagomde" class="h-24 md:h-32 w-auto mb-8 object-contain origin-left transition-transform hover:scale-[1.02] duration-500">
-                
-                <p class="text-[14px] leading-relaxed mb-8 text-gray-500 font-medium">
-                    Sevdiklerinize sıradan bir hediye değil, özenle tasarlanmış anılar armağan edin. Lagomde ile her an, her duygu için anlamlı bir kutu var.
+            {{-- Col 1: Brand --}}
+            <div class="lg:col-span-4 lg:pr-10">
+                <img src="{{ asset('logo.svg') }}" alt="Lagomde" class="h-16 w-auto mb-7 object-contain bg-white">
+
+                <p class="text-sm leading-relaxed mb-8" style="color: rgba(255,255,255,0.4); max-width: 300px;">
+                    Sevdiklerinize sıradan bir hediye değil, özenle tasarlanmış anılar armağan edin. Her duygu için özel bir kutu.
                 </p>
-                
+
+                {{-- Social icons --}}
                 <div class="flex items-center gap-3">
-                    @foreach([['fa-instagram','#'],['fa-facebook-f','#'],['fa-tiktok','#'],['fa-pinterest-p','#']] as [$icon, $url])
-                        <a href="{{ $url }}" class="w-10 h-10 rounded-full flex items-center justify-center border border-gray-200 text-gray-500 transition-all duration-300 hover:-translate-y-1 hover:border-[#326765] hover:bg-[#326765] hover:text-white hover:shadow-md">
+                    @foreach([['fa-instagram', '#'], ['fa-facebook-f', '#'], ['fa-tiktok', '#'], ['fa-pinterest-p', '#']] as [$icon, $url])
+                        <a href="{{ $url }}"
+                           class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:scale-110"
+                           style="background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.08);"
+                           onmouseover="this.style.background='var(--teal,#2E706D)'; this.style.color='#fff'; this.style.borderColor='var(--teal)';"
+                           onmouseout="this.style.background='rgba(255,255,255,0.07)'; this.style.color='rgba(255,255,255,0.5)'; this.style.borderColor='rgba(255,255,255,0.08)';"
+                        >
                             <i class="fa-brands {{ $icon }} text-base"></i>
                         </a>
                     @endforeach
                 </div>
             </div>
 
-            {{-- Sütun 2: Kurumsal (Dinamik) --}}
-            <div class="lg:col-span-2 lg:pt-5">
-                <p class="text-[12px] font-extrabold uppercase tracking-[0.15em] mb-8 text-gray-900">Kurumsal</p>
+            {{-- Col 2: Kurumsal --}}
+            <div class="lg:col-span-2 lg:pt-2">
+                <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] mb-8" style="color: rgba(255,255,255,0.35);">
+                    Kurumsal
+                </p>
                 <ul class="space-y-4">
                     @forelse($footerKurumsal as $sayfa)
-                    <li>
-                        <a href="{{ route('sayfa.goster', $sayfa->slug) }}" class="group flex items-center text-[14px] text-gray-500 transition-all font-medium">
-                            <span class="w-0 overflow-hidden group-hover:w-4 transition-all duration-300 ease-out text-[#326765] flex items-center">
-                                <i class="fa-solid fa-angle-right text-[11px]"></i>
-                            </span>
-                            <span class="group-hover:text-[#326765] group-hover:translate-x-1 transition-transform duration-300">{{ $sayfa->baslik }}</span>
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('sayfa.goster', $sayfa->slug) }}"
+                               class="group flex items-center gap-2 text-sm font-medium transition-all duration-200"
+                               style="color: rgba(255,255,255,0.55);"
+                               onmouseover="this.style.color='var(--teal-light,#3D8E8A)'"
+                               onmouseout="this.style.color='rgba(255,255,255,0.55)'"
+                            >
+                                <span class="w-0 group-hover:w-3 overflow-hidden transition-all duration-200" style="color:var(--copper,#C8845A);">→</span>
+                                {{ $sayfa->baslik }}
+                            </a>
+                        </li>
                     @empty
-                    <li><span class="text-sm text-gray-400">İçerik bekleniyor...</span></li>
+                        <li><span class="text-xs" style="color:rgba(255,255,255,0.2)">Yakında...</span></li>
                     @endforelse
                 </ul>
             </div>
 
-            {{-- Sütun 3: Müşteri Hizmetleri (Dinamik) --}}
-            <div class="lg:col-span-3 lg:pt-5">
-                <p class="text-[12px] font-extrabold uppercase tracking-[0.15em] mb-8 text-gray-900">Müşteri Hizmetleri</p>
+            {{-- Col 3: Müşteri Hizmetleri --}}
+            <div class="lg:col-span-3 lg:pt-2">
+                <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] mb-8" style="color: rgba(255,255,255,0.35);">
+                    Müşteri Hizmetleri
+                </p>
                 <ul class="space-y-4">
                     @forelse($footerYardim as $sayfa)
-                    <li>
-                        <a href="{{ route('sayfa.goster', $sayfa->slug) }}" class="group flex items-center text-[14px] text-gray-500 transition-all font-medium">
-                            <span class="w-0 overflow-hidden group-hover:w-4 transition-all duration-300 ease-out text-[#326765] flex items-center">
-                                <i class="fa-solid fa-angle-right text-[11px]"></i>
-                            </span>
-                            <span class="group-hover:text-[#326765] group-hover:translate-x-1 transition-transform duration-300">{{ $sayfa->baslik }}</span>
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('sayfa.goster', $sayfa->slug) }}"
+                               class="group flex items-center gap-2 text-sm font-medium transition-all duration-200"
+                               style="color: rgba(255,255,255,0.55);"
+                               onmouseover="this.style.color='var(--teal-light,#3D8E8A)'"
+                               onmouseout="this.style.color='rgba(255,255,255,0.55)'"
+                            >
+                                <span class="w-0 group-hover:w-3 overflow-hidden transition-all duration-200" style="color:var(--copper,#C8845A);">→</span>
+                                {{ $sayfa->baslik }}
+                            </a>
+                        </li>
                     @empty
-                    <li><span class="text-sm text-gray-400">İçerik bekleniyor...</span></li>
+                        <li><span class="text-xs" style="color:rgba(255,255,255,0.2)">Yakında...</span></li>
                     @endforelse
                 </ul>
             </div>
 
-            {{-- Sütun 4: İletişim --}}
-            <div class="lg:col-span-3 lg:pt-5">
-                <p class="text-[12px] font-extrabold uppercase tracking-[0.15em] mb-8 text-gray-900">Bize Ulaşın</p>
-                <div class="space-y-6">
+            {{-- Col 4: Contact --}}
+            <div class="lg:col-span-3 lg:pt-2">
+                <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] mb-8" style="color: rgba(255,255,255,0.35);">
+                    Bize Ulaşın
+                </p>
+                <div class="space-y-5">
                     <div class="flex items-start gap-4">
-                        <div class="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 bg-[#EAF1F1] text-[#326765] transition-transform hover:scale-110 duration-300">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style="background: rgba(46,112,109,0.2); color: var(--teal-light,#3D8E8A);">
                             <i class="fa-solid fa-headset text-lg"></i>
                         </div>
-                        <div class="pt-0.5">
-                            <p class="text-[15px] font-bold text-gray-900">0850 000 00 00</p>
-                            <p class="text-xs mt-1 text-gray-500">Hafta içi: 09:00 - 18:00</p>
+                        <div>
+                            <p class="text-base font-bold text-white">0850 000 00 00</p>
+                            <p class="text-[12px] mt-0.5" style="color: rgba(255,255,255,0.35);">
+                                Hft. içi 09:00 – 18:00
+                            </p>
                         </div>
                     </div>
-
                     <div class="flex items-start gap-4">
-                        <div class="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 bg-[#E8F5E9] text-green-600 transition-transform hover:scale-110 duration-300">
-                            <i class="fa-brands fa-whatsapp text-xl"></i>
-                        </div>
-                        <div class="pt-0.5">
-                            <a href="#" class="text-[15px] font-bold text-gray-900 transition-colors hover:text-green-600 inline-block">WhatsApp Destek</a>
-                            <p class="text-xs mt-1 text-gray-500">Hızlı yanıt hattı</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-4">
-                        <div class="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 bg-[#EAF1F1] text-[#326765] transition-transform hover:scale-110 duration-300">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                             style="background: rgba(46,112,109,0.2); color: var(--teal-light,#3D8E8A);">
                             <i class="fa-regular fa-envelope text-lg"></i>
                         </div>
-                        <div class="flex items-center h-11 pt-0.5">
-                            <a href="mailto:destek@lagomde.com" class="text-[15px] font-bold text-gray-900 transition-colors hover:text-[#326765]">destek@lagomde.com</a>
+                        <div class="flex items-center h-11">
+                            <a href="mailto:destek@lagomde.com"
+                               class="text-sm font-semibold transition-colors text-white/70 hover:text-white">
+                                destek@lagomde.com
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -118,34 +157,46 @@
         </div>
     </div>
 
-    {{-- ═══════════════ ALT BANT (Sözleşmeler & Rozetler) ═══════════════ --}}
-    <div class="border-t border-gray-200 bg-gray-50">
-        <div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-7 flex flex-col lg:flex-row items-center justify-between gap-6">
-            
-            <p class="text-[13px] font-medium text-gray-500">
+    {{-- ═══ BOTTOM BAR ═══ --}}
+    <div class="border-t" style="border-color: rgba(255,255,255,0.07);">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-10 py-7 flex flex-col lg:flex-row items-center justify-between gap-5">
+
+            {{-- Copyright --}}
+            <p class="text-[12px] font-medium" style="color: rgba(255,255,255,0.3);">
                 &copy; {{ date('Y') }} Lagomde. Tüm hakları saklıdır.
             </p>
 
-            {{-- Dinamik Sözleşmeler --}}
-            <div class="flex flex-wrap justify-center gap-5 md:gap-8 text-[13px] font-medium">
+            {{-- Legal links --}}
+            <div class="flex flex-wrap justify-center gap-5 text-[12px] font-medium">
                 @foreach($footerSozlesmeler as $sayfa)
-                    <a href="{{ route('sayfa.goster', $sayfa->slug) }}" class="text-gray-500 transition-colors hover:text-[#326765]">
+                    <a href="{{ route('sayfa.goster', $sayfa->slug) }}"
+                       class="transition-colors"
+                       style="color: rgba(255,255,255,0.3);"
+                       onmouseover="this.style.color='rgba(255,255,255,0.7)'"
+                       onmouseout="this.style.color='rgba(255,255,255,0.3)'"
+                    >
                         {{ $sayfa->baslik }}
                     </a>
                 @endforeach
             </div>
 
-            {{-- Kredi Kartı Logoları --}}
-            <div class="flex items-center gap-3 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                <i class="fa-brands fa-cc-visa text-3xl text-blue-800"></i>
-                <i class="fa-brands fa-cc-mastercard text-3xl text-red-600"></i>
-                <i class="fa-brands fa-cc-amex text-3xl text-blue-500"></i>
-                <div class="flex items-center gap-2 ml-2 pl-3 border-l border-gray-300">
-                    <i class="fa-solid fa-shield-halved text-green-600 text-lg"></i>
-                    <span class="text-[10px] font-bold tracking-widest uppercase text-green-700">256-BİT SSL</span>
+            {{-- Payment & Security --}}
+            <div class="flex items-center gap-4" style="opacity: 0.45;" 
+                 onmouseover="this.style.opacity='0.9'"
+                 onmouseout="this.style.opacity='0.45'"
+                 style="transition: opacity 0.3s; opacity: 0.45;">
+                <i class="fa-brands fa-cc-visa text-3xl text-white"></i>
+                <i class="fa-brands fa-cc-mastercard text-3xl text-white"></i>
+                <div class="flex items-center gap-2 pl-4 border-l" style="border-color:rgba(255,255,255,0.15);">
+                    <i class="fa-solid fa-shield-halved text-green-400 text-sm"></i>
+                    <span class="text-[10px] font-bold tracking-widest uppercase text-green-400">256-BİT SSL</span>
                 </div>
             </div>
 
         </div>
     </div>
+
+    {{-- Decorative bottom glow --}}
+    <div class="absolute bottom-0 right-0 w-96 h-96 pointer-events-none"
+         style="background: radial-gradient(circle, rgba(46,112,109,0.08) 0%, transparent 70%);"></div>
 </footer>

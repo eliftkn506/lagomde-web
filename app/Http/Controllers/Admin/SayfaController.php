@@ -54,4 +54,34 @@ class SayfaController extends Controller
 
         return redirect()->route('admin.sayfalar.index')->with('success', 'Sayfa başarıyla silindi.');
     }
+    public function edit($id)
+{
+    $sayfa = Sayfa::findOrFail($id);
+    return view('admin.sayfalar.edit', compact('sayfa'));
+}
+
+public function update(Request $request, $id)
+{
+    // 1. Gelen verileri doğrula
+    $request->validate([
+        'baslik' => 'required|max:255',
+        'icerik' => 'required',
+        'footer_konum' => 'required',
+    ]);
+
+    // 2. Sayfayı bul
+    $sayfa = Sayfa::findOrFail($id);
+
+    // 3. Verileri güncelle
+    $sayfa->update([
+        'baslik'       => $request->baslik,
+        'icerik'       => $request->icerik,
+        'footer_konum' => $request->footer_konum,
+        'sira'         => $request->sira ?? 0,
+        'aktif_mi'     => $request->has('aktif_mi') ? 1 : 0,
+    ]);
+
+    // 4. Başarılı mesajıyla listeye geri gönder
+    return redirect()->route('admin.sayfalar.index')->with('success', 'Sayfa içeriği başarıyla güncellendi.');
+}
 }

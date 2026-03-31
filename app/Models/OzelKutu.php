@@ -10,4 +10,7 @@ class OzelKutu extends Model
 
     public function kullanici() { return $this->belongsTo(Kullanici::class, 'kullanici_id'); }
     public function icerikler() { return $this->hasMany(OzelKutuIcerigi::class, 'ozel_kutu_id'); }
+    public function kutuVaryasyon() {
+        return $this->belongsTo(UrunVaryasyonu::class, 'kutu_varyasyon_id');
+    }
 }

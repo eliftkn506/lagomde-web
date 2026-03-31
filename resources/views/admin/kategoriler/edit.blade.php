@@ -60,6 +60,22 @@
             </select>
         </div>
 
+        {{-- YENİ EKLENDİ: ÖZEL KUTU MODÜLÜ CHECKBOX --}}
+        <div>
+            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Modül Ayarları</label>
+            <label class="flex items-start gap-4 p-5 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition bg-gray-50/50">
+                <div class="pt-0.5">
+                    <input type="checkbox" name="ozel_kutuda_goster" value="1" 
+                           {{ $kategori->ozel_kutuda_goster ? 'checked' : '' }}
+                           class="w-5 h-5 text-[#326765] rounded border-gray-300 focus:ring-[#326765] cursor-pointer">
+                </div>
+                <div>
+                    <span class="block text-sm font-bold text-gray-800">"Kendi Kutunu Yap" Modülünde Göster</span>
+                    <span class="block text-[12px] text-gray-500 mt-1 leading-relaxed">Eğer işaretlerseniz, müşteriler özel hediye kutusu oluştururken bu kategorideki ürünleri <b>kutu veya hediye seçeneği</b> olarak görebilirler. Standart ürün kategorileri için işaretlemeyin.</span>
+                </div>
+            </label>
+        </div>
+
         {{-- Buton --}}
         <div class="pt-4">
             <button type="submit" class="w-full py-4 rounded-xl bg-[#326765] hover:bg-[#26504e] text-white text-sm font-bold tracking-wide uppercase transition shadow-lg shadow-[#326765]/30">

@@ -46,7 +46,7 @@
                     <th class="w-16 text-center">Görsel</th>
                     <th>Kategori Adı</th>
                     <th>Üst Kategori</th>
-                    <th>URL</th>
+                    <th>Özel Kutu Modülü</th> <th>URL</th>
                     <th class="text-right">İşlemler</th>
                 </tr>
             </thead>
@@ -73,15 +73,25 @@
                             <span class="text-xs text-gray-400 font-semibold">Ana Kategori</span>
                         @endif
                     </td>
+                    
+                    {{-- YENİ EKLENDİ: Özel Kutu Rozeti --}}
+                    <td>
+                        @if($kategori->ozel_kutuda_goster)
+                            <span class="px-2 py-1 text-[10px] font-bold rounded-md bg-[#EAF1F1] text-[#326765] border border-[#326765]/20">
+                                <i class="fa-solid fa-box-open mr-1"></i> Aktif
+                            </span>
+                        @else
+                            <span class="text-xs text-gray-400 font-medium">-</span>
+                        @endif
+                    </td>
+
                     <td class="text-gray-500 text-xs">{{ $kategori->slug ?? '-' }}</td>
                     <td class="text-right">
                         <div class="flex items-center justify-end gap-2">
-                            {{-- DÜZENLE BUTONU --}}
                             <a href="{{ route('admin.kategoriler.edit', $kategori->id) }}" class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 text-blue-500 hover:bg-blue-500 hover:text-white flex items-center justify-center transition" title="Düzenle">
                                 <i class="fa-solid fa-pen text-xs"></i>
                             </a>
                             
-                            {{-- SİL BUTONU (Form içinde olmalı) --}}
                             <form action="{{ route('admin.kategoriler.destroy', $kategori->id) }}" method="POST" onsubmit="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?');" class="inline-block">
                                 @csrf
                                 @method('DELETE')
@@ -94,7 +104,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-center text-gray-400 py-12">
+                    <td colspan="6" class="text-center text-gray-400 py-12">
                         <i class="fa-solid fa-layer-group text-4xl mb-3 block opacity-20"></i>
                         <p class="text-sm font-medium">Henüz hiç kategori eklenmemiş.</p>
                     </td>
@@ -111,7 +121,7 @@
     @endif
 </div>
 
-{{-- MODAL (RESİM YÜKLEME EKLENDİ) --}}
+{{-- MODAL (KATEGORİ EKLE) --}}
 <div id="addCategoryModal" class="modal-overlay" onclick="if(event.target===this) this.classList.remove('open')">
     <div class="modal-box text-left max-w-md">
         <div class="flex items-center justify-between mb-6">
@@ -121,7 +131,6 @@
             </button>
         </div>
 
-        {{-- enctype="multipart/form-data" ÇOK ÖNEMLİ (Resim yüklemek için) --}}
         <form action="{{ route('admin.kategoriler.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
@@ -132,7 +141,7 @@
 
             <div>
                 <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Kategori Adı <span class="text-red-500">*</span></label>
-                <input type="text" name="ad" required placeholder="Örn: Hediye Gönder" 
+                <input type="text" name="ad" required placeholder="Örn: Kahveler" 
                        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#326765] focus:ring-1 focus:ring-[#326765] outline-none transition text-sm text-gray-800 font-medium">
             </div>
 
@@ -146,6 +155,17 @@
                         </option>
                     @endforeach
                 </select>
+            </div>
+
+            {{-- YENİ EKLENDİ: ÖZEL KUTU CHECKBOX --}}
+            <div>
+                <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition">
+                    <input type="checkbox" name="ozel_kutuda_goster" value="1" class="w-5 h-5 text-[#326765] rounded border-gray-300 focus:ring-[#326765]">
+                    <div>
+                        <span class="block text-sm font-bold text-gray-800">Özel Kutuda Göster</span>
+                        <span class="block text-[10px] text-gray-500">Bu kategori "Kendi Kutunu Yap" sayfasında hediye veya kutu seçeneği olarak listelensin.</span>
+                    </div>
+                </label>
             </div>
 
             <div class="pt-3 flex gap-3">

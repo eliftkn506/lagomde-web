@@ -11,10 +11,22 @@ return new class extends Migration
             $table->id();
             $table->foreignId('kullanici_id')->nullable()->constrained('kullanicilar')->onDelete('cascade');
             $table->string('session_id')->nullable();
+            
+            // ── YENİ EKLENEN KRİTİK ALANLAR ──
+            // 1. Seçilen fiziksel boş kutunun (ambalajın) varyasyon ID'si
+            $table->foreignId('kutu_varyasyon_id')->constrained('urun_varyasyonlari')->onDelete('restrict');
+            
+            // 2. Müşterinin yazacağı hediye notu
+            $table->text('hediye_notu')->nullable(); 
+            // ──────────────────────────────────
+
             $table->decimal('toplam_fiyat', 10, 2)->default(0);
             $table->enum('durum', ['taslak', 'sepette', 'satildi'])->default('taslak');
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('ozel_kutular'); }
+    
+    public function down(): void { 
+        Schema::dropIfExists('ozel_kutular'); 
+    }
 };

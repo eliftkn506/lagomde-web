@@ -9,6 +9,10 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\UrunController;
 use App\Http\Controllers\Admin\SayfaController as AdminSayfaController; // Admin Sayfaları İçin
 use App\Http\Controllers\Admin\AnasayfaBlokController;
+use App\Http\Controllers\KategoriSayfaController;
+use App\Http\Controllers\UrunDetayController;
+use App\Http\Controllers\OzelKutuController;
+
 
 // ── FRONTEND (ÖN YÜZ) ─────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -75,4 +79,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // Çıkış (Hem GET hem POST destekli)
     Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout.post');
+    
 });
+
+Route::get('/kategori/{slug}', [KategoriSayfaController::class, 'goster'])->name('kategori.goster');
+    Route::get('/urun/{slug}', [UrunDetayController::class, 'goster'])->name('urun.detay');
+
+
+Route::get('/kendi-kutunu-yap', [OzelKutuController::class, 'index'])->name('kendi.kutunu.yap');
+Route::post('/kendi-kutunu-yap/sepete-ekle', [OzelKutuController::class, 'sepeteEkle'])->name('kutu.sepete.ekle');

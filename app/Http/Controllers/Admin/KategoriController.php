@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str; // Slug üretmek için gerekli
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage; // Storage facade'ı eklendi
 
 class KategoriController extends Controller
 {
@@ -19,13 +20,12 @@ class KategoriController extends Controller
         return view('admin.kategoriler.index', compact('kategoriler', 'tumKategoriler'));
     }
 
-    // YENİ EKLENEN METOD
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'ad' => 'required|string|max:255',
             'ust_kategori_id' => 'nullable|exists:kategoriler,id',
-            'gorsel' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' // Resim doğrulaması
+            'gorsel' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048'
         ]);
 
         $slug = Str::slug($request->ad);
@@ -41,26 +41,24 @@ class KategoriController extends Controller
         }
 
         Kategori::create([
-            'ad' => $request->ad,
-            'slug' => $slug,
-            'ust_kategori_id' => $request->ust_kategori_id,
-            'gorsel' => $gorselYolu, // Veritabanına kaydet
+            'ad'                 => $request->ad,
+            'slug'               => $slug,
+            'ust_kategori_id'    => $request->ust_kategori_id,
+            'gorsel'             => $gorselYolu,
+            'ozel_kutuda_goster' => $request->has('ozel_kutuda_goster') ? 1 : 0, // YENİ EKLENDİ
         ]);
 
-        return back()->with('success', 'Kategori resmiyle birlikte başarıyla eklendi.');
+        return back()->with('success', 'Kategori başarıyla eklendi.');
     }
 
-    // Kategori Düzenleme Ekranı
     public function edit($id)
     {
         $kategori = Kategori::findOrFail($id);
-        // Kendisini üst kategori olarak seçmesini engellemek için listeyi filtreliyoruz
         $tumKategoriler = Kategori::with('ustKategori')->where('id', '!=', $id)->get();
 
         return view('admin.kategoriler.edit', compact('kategori', 'tumKategoriler'));
     }
 
-    // Kategori Güncelleme İşlemi
     public function update(Request $request, $id)
     {
         $kategori = Kategori::findOrFail($id);
@@ -79,9 +77,9 @@ class KategoriController extends Controller
 
         // Yeni resim yüklendiyse
         if ($request->hasFile('gorsel')) {
-            // Eski resmi sunucudan sil (Yer kaplamaması için)
-            if ($kategori->gorsel && \Illuminate\Support\Facades\Storage::disk('public')->exists($kategori->gorsel)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($kategori->gorsel);
+            // Eski resmi sunucudan sil
+            if ($kategori->gorsel && Storage::disk('public')->exists($kategori->gorsel)) {
+                Storage::disk('public')->delete($kategori->gorsel);
             }
             // Yeni resmi yükle
             $kategori->gorsel = $request->file('gorsel')->store('kategoriler', 'public');
@@ -90,19 +88,19 @@ class KategoriController extends Controller
         $kategori->ad = $request->ad;
         $kategori->slug = $slug;
         $kategori->ust_kategori_id = $request->ust_kategori_id;
+        $kategori->ozel_kutuda_goster = $request->has('ozel_kutuda_goster') ? 1 : 0; // YENİ EKLENDİ
         $kategori->save();
 
         return redirect()->route('admin.kategoriler.index')->with('success', 'Kategori başarıyla güncellendi.');
     }
 
-    // Kategori Silme İşlemi
     public function destroy($id)
     {
         $kategori = Kategori::findOrFail($id);
         
         // Varsa resmini de sunucudan sil
-        if ($kategori->gorsel && \Illuminate\Support\Facades\Storage::disk('public')->exists($kategori->gorsel)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($kategori->gorsel);
+        if ($kategori->gorsel && Storage::disk('public')->exists($kategori->gorsel)) {
+            Storage::disk('public')->delete($kategori->gorsel);
         }
         
         $kategori->delete();
